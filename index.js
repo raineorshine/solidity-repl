@@ -24,14 +24,10 @@ const evalSol = commands => {
   const isExpression = command => !/[^=]=[^=]/.test(command)
   const lastCommand = commands[commands.length - 1]
 
-  // if the last command entered is not an expression with a return value (e.g. an assignment), just return null
-  if (!isExpression(lastCommand)) {
-    return Promise.resolve(null)
-  }
-
   let returnType = 'bool'
   const content = commands.slice(0, commands.length - 1).join('\n')
-  const sourceFirstPass = template({ content, returnType, returnExpression: lastCommand })
+  const contentWithReturnExpression = commands.join('\n')
+  const sourceFirstPass = template({ content: contentWithReturnExpression, returnType, returnExpression: isExpression(lastCommand) ? lastCommand : 'false;' })
   let source = sourceFirstPass
 
   // Attempt to compile the first pass knowing that any return value (other than bool) will fail. Parse the error message to determine the correct return value and generate the correct source.
@@ -50,6 +46,12 @@ const evalSol = commands => {
 
   if (compilation.errors) {
     return Promise.reject('Error compiling Solidity')
+  }
+
+  // if the last command is not an expression with a return value (e.g. an assignment), just return null
+  // this still must be done after compilation in case there is an error
+  if (!isExpression(lastCommand)) {
+    return Promise.resolve(null)
   }
 
   const bytecode = compilation.contracts[contractName].bytecode

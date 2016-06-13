@@ -63,8 +63,18 @@ describe('solidity-repl', () => {
       .catch(() => {})
   })
 
-  it('should recover after there is an error', () => {
+  it('should recover from errors', () => {
     return repl('$#$*(@)')
+      .catch(() => {})
+      .then(() => repl('uint a = 10'))
+      .then(() => repl('a'))
+      .then(result => {
+        assert.equal(result, 10)
+      })
+  })
+
+  it('should recover from errors in non-expressions', () => {
+    return repl('uint z = %#@*$')
       .catch(() => {})
       .then(() => repl('uint a = 10'))
       .then(() => repl('a'))
