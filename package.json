@@ -1,0 +1,33 @@
+{
+  "name": "solidity-repl",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Ethereum Solidity REPL",
+  "license": "ISC",
+  "repository": "https://github.com/raineorshine/solidity-repl",
+  "author": {
+    "name": "Raine Revere",
+    "email": "raineorshine@gmail.com",
+    "url": "http://raine.tech"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "bin": {
+    "solr": "./bin.js"
+  },
+  "scripts": {
+    "lint": "standard",
+    "test": "mocha",
+    "watch": "chokidar \"*.js\" -c \"npm run lint && npm run test\""
+  },
+  "devDependencies": {
+    "chokidar-cli": "^1.2.0",
+    "mocha": "^2.5.3",
+    "standard": "^7.0.1"
+  },
+  "dependencies": {
+    "solc": "^0.3.5",
+    "web3": "^0.17.0-alpha"
+  }
+}
