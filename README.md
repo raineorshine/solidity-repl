@@ -1,5 +1,11 @@
 # solidity repl
 
+## Requirements
+
+```sh
+$ npm install -g ethereumjs-testrpc
+```
+
 ## Installation
 
 ```sh
