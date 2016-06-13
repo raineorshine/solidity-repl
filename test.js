@@ -19,6 +19,20 @@ describe('solidity-repl', () => {
       })
   })
 
+  it('should return null for empty lines', () => {
+    return repl('')
+      .then(result => {
+        assert.equal(result, null)
+      })
+  })
+
+  it('should return null for whitespace', () => {
+    return repl('    ')
+      .then(result => {
+        assert.equal(result, null)
+      })
+  })
+
   it('should evaluate solidity code and return the result', () => {
     return repl('uint a = 10;')
       .then(() => repl('a'))

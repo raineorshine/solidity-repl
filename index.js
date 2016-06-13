@@ -73,9 +73,14 @@ module.exports = () => {
 
   /** Takes a new command and returns the result of evaluating it in the current context. */
   return command => {
-    const commandWithSemi = command + (command.endsWith(';') ? '' : ';')
-    return evalSol(commands.concat(commandWithSemi))
-      // only push the command to the command history if there was no error
-      .then(result => commands.push(commandWithSemi) && result)
+    // ignore blank lines
+    if (command.trim() === '') {
+      return Promise.resolve(null)
+    } else {
+      const commandWithSemi = command + (command.endsWith(';') ? '' : ';')
+      return evalSol(commands.concat(commandWithSemi))
+        // only push the command to the command history if there was no error
+        .then(result => commands.push(commandWithSemi) && result)
+    }
   }
 }
