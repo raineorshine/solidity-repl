@@ -1,5 +1,7 @@
 # solidity repl
 
+![REPL Screenshot](https://raw.githubusercontent.com/raineorshine/solidity-repl/master/screenshot.png)
+
 ## Requirements
 
 ```sh
