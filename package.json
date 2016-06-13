@@ -1,6 +1,5 @@
 {
   "name": "solidity-repl",
-  "private": true,
   "version": "0.0.0",
   "description": "Ethereum Solidity REPL",
   "license": "ISC",
