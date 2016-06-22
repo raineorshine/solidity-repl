@@ -19,6 +19,13 @@ describe('solidity-repl', () => {
       })
   })
 
+  it('should trim the input', () => {
+    return repl('  uint a = 10;  ')
+      .then(result => {
+        assert.equal(result, null)
+      })
+  })
+
   it('should return null for empty lines', () => {
     return repl('')
       .then(result => {

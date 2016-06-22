@@ -74,9 +74,11 @@ module.exports = () => {
   const commands = []
 
   /** Takes a new command and returns the result of evaluating it in the current context. */
-  return command => {
+  return rawCommand => {
+    const command = rawCommand.trim()
+
     // ignore blank lines
-    if (command.trim() === '') {
+    if (command === '') {
       return Promise.resolve(null)
     } else {
       const commandWithSemi = command + (command.endsWith(';') ? '' : ';')
