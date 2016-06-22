@@ -18,11 +18,11 @@
   "scripts": {
     "lint": "standard",
     "test": "mocha",
-    "watch": "chokidar \"*.js\" -c \"npm run lint && npm run test\""
+    "watch": "nodemon -x \"npm run lint && npm run test\""
   },
   "devDependencies": {
-    "chokidar-cli": "^1.2.0",
     "mocha": "^2.5.3",
+    "nodemon": "^1.9.2",
     "standard": "^7.0.1"
   },
   "dependencies": {
