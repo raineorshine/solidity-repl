@@ -26,6 +26,10 @@
     "standard": "^7.0.1"
   },
   "dependencies": {
+    "bluebird": "^3.4.1",
+    "eth-new-contract": "^0.1.0",
+    "ethereumjs-testrpc": "^2.0.8",
+    "promise.waterfall": "^3.1.4",
     "solc": "^0.3.5",
     "web3": "^0.17.0-alpha"
   }

@@ -1,24 +1,32 @@
 'use strict'
 
 const solc = require('solc')
+const bluebird = require('bluebird')
 const Web3 = require('web3')
+const TestRPC = require('ethereumjs-testrpc')
+const waterfall = require('promise.waterfall')
+const newContract = require('eth-new-contract')
+
 const contractName = 'ReplContainer'
+const main = 'Main'
 
-const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
-
+// contract template where the user commands are injected before compilation
 const template = args => `contract ${contractName} {
-  function Main() constant returns (${args.returnType}) {
+  function ${main}() constant returns (${args.returnType}) {
     ${args.content}
     return ${args.returnExpression}
   }
 }`
 
-const regexpReturnError = /Return argument type (.*) is not implicitly convertible to expected type \(type of first return variable\) bool./
-
 /** Parse the error message thrown with a naive compile in order to determine the actual return type. This is the hacky alternative to parsing an AST. */
+const regexpReturnError = /Return argument type (.*) is not implicitly convertible to expected type \(type of first return variable\) bool./
 const matchReturnTypeFromError = message => message.match(regexpReturnError)
 
-/** Takes a list of commands and evaluates them inside a contract. Returns the return value of the last command. */
+// setup web3
+const web3 = new Web3(TestRPC.provider())
+const getAccounts = bluebird.promisify(web3.eth.getAccounts.bind(web3.eth))
+
+/** Takes a list of commands and evaluates them inside a contract. Returns a promised result of the last command. Returns null if the command is not an expression. */
 const evalSol = commands => {
   /** Returns true if the given command is an expression that can return a value. */
   const isExpression = command => !/[^=]=[^=]/.test(command)
@@ -54,19 +62,17 @@ const evalSol = commands => {
     return Promise.resolve(null)
   }
 
+  // if we made it this far, deploy the bytecode
   const bytecode = compilation.contracts[contractName].bytecode
   const abi = JSON.parse(compilation.contracts[contractName].interface)
   const ReplContainer = web3.eth.contract(abi)
 
-  return new Promise((resolve, reject) => {
-    const contract = ReplContainer.new({ from: web3.eth.accounts[0], data: bytecode, gas: 3e6 }, (err, myContract) => {
-      if (err) {
-        reject(err)
-      } else if (myContract.address) {
-        resolve(contract.Main())
-      }
-    })
-  })
+  // execute the compiled contract and execute its Main function to get a result
+  return waterfall([
+    getAccounts,
+    accounts => newContract(ReplContainer, { from: accounts[0], data: bytecode, gas: 3e6 }),
+    contract => bluebird.promisify(contract[main])()
+  ])
 }
 
 /** Creates a new repl environment that can evaluate solidity commands. Returns a single function that takes a new command. */
@@ -80,11 +86,13 @@ module.exports = () => {
     // ignore blank lines
     if (command === '') {
       return Promise.resolve(null)
-    } else {
-      const commandWithSemi = command + (command.endsWith(';') ? '' : ';')
-      return evalSol(commands.concat(commandWithSemi))
-        // only push the command to the command history if there was no error
-        .then(result => commands.push(commandWithSemi) && result)
     }
+
+    const commandWithSemi = command + (command.endsWith(';') ? '' : ';')
+    return evalSol(commands.concat(commandWithSemi))
+      .then(result => {
+        commands.push(commandWithSemi)
+        return result
+      })
   }
 }

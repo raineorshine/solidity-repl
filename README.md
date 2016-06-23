@@ -2,15 +2,6 @@
 
 ![REPL Screenshot](https://raw.githubusercontent.com/raineorshine/solidity-repl/master/screenshot.png)
 
-## Requirements
-
-The Solidity REPL requires node v4 and testrpc.
-
-```sh
-$ npm install -g ethereumjs-testrpc
-$ testrpc
-```
-
 ## Installation
 
 ```sh
@@ -26,18 +17,20 @@ Welcome to the Solidity REPL!
 > uint b = 20
 > a + b
 30
+> msg.sender
+0x2f42491c0a08e4bc0cd3d5a96533a69727e16911
 ```
 
 ## Help Wanted
 
 Here are some features that are great candidates for pull requests! Start an issue to let me know you are working on it.
 
-1. Can we run testrpc internally to avoid the external dependency?
-1. Print an informative error message for when testrpc is not running.
-1. Add command line argument for testrpc port.
-1. Add command line argument for verbose output.
-1. Add `yargs` for cli help.
+1. Make it work in the browser!
+1. Fix `1 ether`
+1. Fix `this`
 1. Add support for function declarations.
+1. Add up and down arrow
+1. Add `yargs` for cli help.
 
 ## License
 
