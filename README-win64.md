@@ -23,14 +23,7 @@ Many, but all embedded now:
 ### solidity-repl
     npm install -g solidity-repl
 
-
 ### run
-
-Two terminals (cmd.exe):
-
-    testrpc
-
-and 
 
     solr
 
