@@ -2,16 +2,21 @@
 
 const solc = require('solc')
 const bluebird = require('bluebird')
-const Web3 = require('web3')
+const chalk = require('chalk')
 const TestRPC = require('ethereumjs-testrpc')
 const waterfall = require('promise.waterfall')
-const newContract = require('eth-new-contract')
+const Web3 = require('web3')
+const provider = new Web3.providers.HttpProvider('http://localhost:8545')
+const web3 = new Web3(TestRPC.provider())
+const newContract = require('eth-new-contract').default(provider)
+const pkg = require('./package.json')
 
 const contractName = 'ReplContainer'
 const main = 'Main'
 
 // contract template where the user commands are injected before compilation
-const template = args => `contract ${contractName} {
+const template = args => `pragma solidity ${pkg.dependencies.solc};
+contract ${contractName} {
   function ${main}() constant returns (${args.returnType}) {
     ${args.content}
     return ${args.returnExpression}
@@ -22,8 +27,6 @@ const template = args => `contract ${contractName} {
 const regexpReturnError = /Return argument type (.*) is not implicitly convertible to expected type \(type of first return variable\) bool./
 const matchReturnTypeFromError = message => message.match(regexpReturnError)
 
-// setup web3
-const web3 = new Web3(TestRPC.provider())
 const getAccounts = bluebird.promisify(web3.eth.getAccounts.bind(web3.eth))
 
 /** Takes a list of commands and evaluates them inside a contract. Returns a promised result of the last command. Returns null if the command is not an expression. */
@@ -40,20 +43,46 @@ const evalSol = commands => {
 
   // Attempt to compile the first pass knowing that any return value (other than bool) will fail. Parse the error message to determine the correct return value and generate the correct source.
   const compilationFirstPass = solc.compile(sourceFirstPass)
+
+  // get errors and warnings
+  // remove "Unused local variable" warning which will always trigger in REPL mode
   if (compilationFirstPass.errors) {
-    const match = matchReturnTypeFromError(compilationFirstPass.errors[0])
-    if (match) {
-      returnType = match[1]
-    } else {
-      return Promise.reject(compilationFirstPass.errors.join('\n'))
+
+    const errorsFirstPass = compilationFirstPass.errors
+      .filter(err => !err.match(/\: Warning\: /))
+    const warnings = compilationFirstPass.errors
+      .filter(err => err.match(/\: Warning\: /) && !err.match('Unused local variable'))
+
+    if (warnings.length) {
+      console.log(chalk.yellow(warnings.join('\n')))
     }
-    source = template({ content, returnType, returnExpression: lastCommand })
+
+    // handle errors
+    if (errorsFirstPass.length > 0) {
+      const match = matchReturnTypeFromError(errorsFirstPass[0])
+      if (match) {
+        returnType = match[1]
+      } else {
+        return Promise.reject(errorsFirstPass.join('\n'))
+      }
+      source = template({ content, returnType, returnExpression: lastCommand })
+    }
   }
 
   const compilation = solc.compile(source)
-
   if (compilation.errors) {
-    return Promise.reject('Error compiling Solidity')
+
+    const errors = compilation.errors
+      .filter(err => !err.match(/\: Warning\: /))
+
+    if (errors.length) {
+      console.error(chalk.red(`Error compiling Solidity:
+
+${source.split('\n').map((line, n) => (n + 1) + '  ' + line).join('\n')}
+
+  ${errors.join('\n  ')}`, errors))
+      return Promise.reject('Error compiling Solidity')
+    }
   }
 
   // if the last command is not an expression with a return value (e.g. an assignment), just return null
@@ -63,8 +92,9 @@ const evalSol = commands => {
   }
 
   // if we made it this far, deploy the bytecode
-  const bytecode = compilation.contracts[contractName].bytecode
-  const abi = JSON.parse(compilation.contracts[contractName].interface)
+  const contract = compilation.contracts[`:${contractName}`]
+  const bytecode = contract.bytecode
+  const abi = JSON.parse(contract.interface)
   const ReplContainer = web3.eth.contract(abi)
 
   // execute the compiled contract and execute its Main function to get a result

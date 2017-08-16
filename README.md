@@ -32,6 +32,10 @@ Here are some features that are great candidates for pull requests! Start an iss
 1. Add up and down arrow
 1. Add `yargs` for cli help.
 
+# Developer Notes
+
+- bignumber.js is included because it is missing from a dependency
+
 ## License
 
 ISC

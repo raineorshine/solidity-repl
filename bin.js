@@ -5,9 +5,6 @@ const Repl = require('./index.js')
 
 const printPrompt = () => process.stdout.write('> ')
 
-/** Remove line numbers from error messages.*/
-const cleanError = message => message.match(/:\d+:\d+: (.*)/)[1]
-
 console.log('Welcome to the Solidity REPL!')
 printPrompt()
 
@@ -32,7 +29,7 @@ process.stdin.on('data', command => {
         }
       })
       .catch(err => {
-        console.log(cleanError(err))
+        console.log(err)
       })
       .then(printPrompt)
   }

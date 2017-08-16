@@ -2,7 +2,7 @@
 
 /* global describe, it, beforeEach */
 
-const Repl = require('./index.js')
+const Repl = require('../index.js')
 const assert = require('assert')
 
 describe('solidity-repl', () => {
@@ -56,7 +56,7 @@ describe('solidity-repl', () => {
       })
   })
 
-  it('should evaluate compount expressions', () => {
+  it('should evaluate compound expressions', () => {
     return repl('uint a = 10')
       .then(() => repl('uint b = 20'))
       .then(() => repl('a + b'))

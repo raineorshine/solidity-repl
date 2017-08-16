@@ -26,11 +26,13 @@
     "standard": "^7.0.1"
   },
   "dependencies": {
+    "bignumber.js": "^4.0.2",
     "bluebird": "^3.4.1",
-    "eth-new-contract": "^0.1.0",
+    "chalk": "^2.1.0",
+    "eth-new-contract": "^0.3.0",
     "ethereumjs-testrpc": "^4.0.1",
     "promise.waterfall": "^3.1.4",
-    "solc": "^0.3.5",
+    "solc": "^0.4.15",
     "web3": "^0.17.0-alpha"
   }
 }
