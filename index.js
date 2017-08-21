@@ -7,7 +7,9 @@ const TestRPC = require('ethereumjs-testrpc')
 const waterfall = require('promise.waterfall')
 const Web3 = require('web3')
 const provider = new Web3.providers.HttpProvider('http://localhost:8545')
-const web3 = new Web3(TestRPC.provider())
+// TestRPC.provider() gives error "Synchronous requests are not supported."
+// during newContract in latest version.
+const web3 = new Web3(provider)
 const newContract = require('eth-new-contract').default(provider)
 const pkg = require('./package.json')
 
@@ -27,7 +29,15 @@ contract ${contractName} {
 const regexpReturnError = /Return argument type (.*) is not implicitly convertible to expected type \(type of first return variable\) bool./
 const matchReturnTypeFromError = message => message.match(regexpReturnError)
 
-const getAccounts = bluebird.promisify(web3.eth.getAccounts.bind(web3.eth))
+// promisified getAccounts because Bluebird.promisify gives "callback is not a function"
+const getAccounts = () => {
+  return new bluebird((resolve, reject) => {
+    web3.eth.getAccounts((err, result) => {
+      if (err) return reject(err)
+      resolve(result)
+    })
+  })
+}
 
 /** Takes a list of commands and evaluates them inside a contract. Returns a promised result of the last command. Returns null if the command is not an expression. */
 const evalSol = commands => {
