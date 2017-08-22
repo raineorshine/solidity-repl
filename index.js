@@ -1,7 +1,7 @@
 'use strict'
 
 const solc = require('solc')
-const Bluebird = require('Bluebird')
+const Bluebird = require('bluebird')
 const chalk = require('chalk')
 const waterfall = require('promise.waterfall')
 const Web3 = require('web3')
