@@ -1,12 +1,12 @@
 'use strict'
 
 const solc = require('solc')
-const bluebird = require('bluebird')
+const Bluebird = require('Bluebird')
 const chalk = require('chalk')
-const TestRPC = require('ethereumjs-testrpc')
 const waterfall = require('promise.waterfall')
 const Web3 = require('web3')
 const provider = new Web3.providers.HttpProvider('http://localhost:8545')
+// const TestRPC = require('ethereumjs-testrpc')
 // TestRPC.provider() gives error "Synchronous requests are not supported."
 // during newContract in latest version.
 const web3 = new Web3(provider)
@@ -31,7 +31,7 @@ const matchReturnTypeFromError = message => message.match(regexpReturnError)
 
 // promisified getAccounts because Bluebird.promisify gives "callback is not a function"
 const getAccounts = () => {
-  return new bluebird((resolve, reject) => {
+  return new Bluebird((resolve, reject) => {
     web3.eth.getAccounts((err, result) => {
       if (err) return reject(err)
       resolve(result)
@@ -57,11 +57,10 @@ const evalSol = commands => {
   // get errors and warnings
   // remove "Unused local variable" warning which will always trigger in REPL mode
   if (compilationFirstPass.errors) {
-
     const errorsFirstPass = compilationFirstPass.errors
-      .filter(err => !err.match(/\: Warning\: /))
+      .filter(err => !err.match(/: Warning: /))
     const warnings = compilationFirstPass.errors
-      .filter(err => err.match(/\: Warning\: /) && !err.match('Unused local variable'))
+      .filter(err => err.match(/: Warning: /) && !err.match('Unused local variable'))
 
     if (warnings.length) {
       console.log(chalk.yellow(warnings.join('\n')))
@@ -80,10 +79,10 @@ const evalSol = commands => {
   }
 
   const compilation = solc.compile(source)
-  if (compilation.errors) {
 
+  if (compilation.errors) {
     const errors = compilation.errors
-      .filter(err => !err.match(/\: Warning\: /))
+      .filter(err => !err.match(/: Warning: /))
 
     if (errors.length) {
       console.error(chalk.red(`Error compiling Solidity:
@@ -111,7 +110,7 @@ ${source.split('\n').map((line, n) => (n + 1) + '  ' + line).join('\n')}
   return waterfall([
     getAccounts,
     accounts => newContract(ReplContainer, { from: accounts[0], data: bytecode, gas: 3e6 }),
-    contract => bluebird.promisify(contract[main])()
+    contract => Bluebird.promisify(contract[main])()
   ])
 }
 
