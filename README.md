@@ -5,12 +5,17 @@
 ## Installation
 
 ```sh
+# TestRPC must be installed and run globally now since TestRPC.provider() does not work
+$ npm install -g ethereumjs-testrpc
+
 $ npm install -g solidity-repl
 ```
 
 ## Usage
 
 ```sh
+$ testrpc
+
 $ solr
 Welcome to the Solidity REPL!
 > uint a = 10
