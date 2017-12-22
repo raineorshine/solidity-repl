@@ -56,6 +56,14 @@ describe('solidity-repl', () => {
       })
   })
 
+  it('should evaluate multiple statements', () => {
+    retun repl('uint a = 10; a = 11;')
+      .then(() => repl('a'))
+      .then(result => {
+        assert.equal(result, 11)
+      })
+  })
+
   it('should evaluate compound expressions', () => {
     return repl('uint a = 10')
       .then(() => repl('uint b = 20'))
