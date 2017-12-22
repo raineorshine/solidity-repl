@@ -132,7 +132,6 @@ module.exports = () => {
     for (let x in intermediate) {
       if (intermediate[x] != '') {
         let y = intermediate[x].trim() + (intermediate[x].endsWith(';') ? '' : ';');
-        console.log(y);
         commands.push(y);
       }
     }
