@@ -116,22 +116,30 @@ ${source.split('\n').map((line, n) => (n + 1) + '  ' + line).join('\n')}
 
 /** Creates a new repl environment that can evaluate solidity commands. Returns a single function that takes a new command. */
 module.exports = () => {
-  const commands = []
+  const commands = [];
 
   /** Takes a new command and returns the result of evaluating it in the current context. */
   return rawCommand => {
-    const command = rawCommand.trim()
+    const command = rawCommand.trim();
 
     // ignore blank lines
     if (command === '') {
-      return Promise.resolve(null)
+      return Promise.resolve(null);
     }
 
-    const commandWithSemi = command + (command.endsWith(';') ? '' : ';')
-    return evalSol(commands.concat(commandWithSemi))
+    let intermediate = command.split(';');
+
+    for (let x in intermediate) {
+      if (intermediate[x] != '') {
+        let y = intermediate[x].trim() + (intermediate[x].endsWith(';') ? '' : ';');
+        console.log(y);
+        commands.push(y);
+      }
+    }
+
+    return evalSol(commands)
       .then(result => {
-        commands.push(commandWithSemi)
         return result
-      })
+      });
   }
 }
