@@ -40,7 +40,7 @@ const getAccounts = () => {
 }
 
 /** Takes a list of commands and evaluates them inside a contract. Returns a promised result of the last command. Returns null if the command is not an expression. */
-const evalSol = commands => {
+const evalSol = (commands, options={}) => {
   /** Returns true if the given command is an expression that can return a value. */
   const isExpression = command => !/[^=]=[^=]/.test(command)
   const lastCommand = commands[commands.length - 1]
@@ -59,11 +59,14 @@ const evalSol = commands => {
   if (compilationFirstPass.errors) {
     const errorsFirstPass = compilationFirstPass.errors
       .filter(err => !err.match(/: Warning: /))
-    const warnings = compilationFirstPass.errors
-      .filter(err => err.match(/: Warning: /) && !err.match('Unused local variable'))
 
-    if (warnings.length) {
-      console.log(chalk.yellow(warnings.join('\n')))
+    if (options.loglevel === 'warnings') {
+      const warnings = compilationFirstPass.errors
+        .filter(err => err.match(/: Warning: /) && !err.match('Unused local variable'))
+
+      if (warnings.length) {
+        console.log(chalk.yellow(warnings.join('\n')))
+      }
     }
 
     // handle errors
@@ -115,7 +118,7 @@ ${source.split('\n').map((line, n) => (n + 1) + '  ' + line).join('\n')}
 }
 
 /** Creates a new repl environment that can evaluate solidity commands. Returns a single function that takes a new command. */
-module.exports = () => {
+module.exports = options => {
   const commands = []
 
   /** Takes a new command and returns the result of evaluating it in the current context. */
@@ -128,7 +131,7 @@ module.exports = () => {
     }
 
     const commandWithSemi = command + (command.endsWith(';') ? '' : ';')
-    return evalSol(commands.concat(commandWithSemi))
+    return evalSol(commands.concat(commandWithSemi), options)
       .then(result => {
         commands.push(commandWithSemi)
         return result

@@ -1,14 +1,24 @@
 #!/usr/bin/env node
 'use strict'
 
+const program = require('commander')
+const pkg = require('./package.json')
 const Repl = require('./index.js')
+
+console.log('Welcome to the Solidity REPL!')
+
+program
+  .version(pkg.version)
+  .option('--loglevel [value]', 'errors-only (default)/warnings')
+  .parse(process.argv)
+
+console.log(program.loglevel)
 
 const printPrompt = () => process.stdout.write('> ')
 
-console.log('Welcome to the Solidity REPL!')
 printPrompt()
 
-let repl = Repl()
+let repl = Repl(program)
 
 process.stdin.resume()
 process.stdin.setEncoding('utf8')
@@ -17,7 +27,7 @@ process.stdin.on('data', command => {
   if (command === 'quit\n') {
     process.exit()
   } else if (command === 'clear\n') {
-    repl = Repl()
+    repl = Repl(program)
     printPrompt()
   } else {
     // evaluate the command
