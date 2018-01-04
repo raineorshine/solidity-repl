@@ -12,8 +12,6 @@ program
   .option('--loglevel [value]', 'errors-only (default)/warnings')
   .parse(process.argv)
 
-console.log(program.loglevel)
-
 const printPrompt = () => process.stdout.write('> ')
 
 printPrompt()
