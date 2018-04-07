@@ -42,7 +42,7 @@ const getAccounts = () => {
 /** Takes a list of commands and evaluates them inside a contract. Returns a promised result of the last command. Returns null if the command is not an expression. */
 const evalSol = (commands, options={}) => {
   /** Returns true if the given command is an expression that can return a value. */
-  const isExpression = command => !/[^=]=[^=]/.test(command)
+  const isExpression = command => (!/[^=]=[^=]/.test(command)) && (!command.startsWith('delete'))
   const lastCommand = commands[commands.length - 1]
 
   let returnType = 'bool'
