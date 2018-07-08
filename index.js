@@ -16,6 +16,29 @@ const pkg = require('./package.json')
 const contractName = 'ReplContainer'
 const main = 'Main'
 
+// speacial commands
+const specialGlobals = {
+  "msg": [
+    {"prop": "data", "returnType": "bytes"},
+    {"prop": "gas", "returnType": "uint256"},
+    {"prop": "sender", "returnType": "address"},
+    {"prop": "sig", "returnType": "bytes4"},
+    {"prop": "value", "returnType": "uint256"}
+  ],
+  "block": [
+    {"prop":"coinbase", "returnType": "address"},
+    {"prop":"difficulty", "returnType": "uint256"},
+    {"prop":"gaslimit", "returnType": "uint256"},
+    {"prop":"number", "returnType": "uint256"},
+    {"prop":"timestamp", "returnType": "uint256"}
+  ],
+  "tx": [
+    {"prop": "gasprice", "returnType": "uint"},
+    {"prop": "origin", "returnType": "address"}
+  ]
+
+}
+
 // contract template where the user commands are injected before compilation
 const template = args => `pragma solidity ${pkg.dependencies.solc};
 contract ${contractName} {
@@ -24,6 +47,9 @@ contract ${contractName} {
     return ${args.returnExpression}
   }
 }`
+
+// helper function to get a list of desired attribute values
+const pluck = (arr, key) => arr.map(item => item[key])
 
 /** Parse the error message thrown with a naive compile in order to determine the actual return type. This is the hacky alternative to parsing an AST. */
 const regexpReturnError = /Return argument type (.*) is not implicitly convertible to expected type \(type of first return variable\) bool./
@@ -44,11 +70,21 @@ const evalSol = (commands, options={}) => {
   /** Returns true if the given command is an expression that can return a value. */
   const isExpression = command => (!/[^=]=[^=]/.test(command)) && (!command.startsWith('delete'))
   const lastCommand = commands[commands.length - 1]
+  const commandWithoutSemi = lastCommand.endsWith(';') ? lastCommand.substring(0, lastCommand.length - 1) : lastCommand
 
-  let returnType = 'bool'
   const content = commands.slice(0, commands.length - 1).join('\n')
-  const contentWithReturnExpression = commands.join('\n')
-  const sourceFirstPass = template({ content: contentWithReturnExpression, returnType, returnExpression: isExpression(lastCommand) ? lastCommand : 'false;' })
+  let contentWithReturnExpression = commands.join('\n')
+
+  const specialCommand = specialGlobals[commandWithoutSemi]
+  const sourceFirstPass = template(specialCommand ? {
+    content,
+    returnType: pluck(specialGlobals[commandWithoutSemi], "returnType").join(", "),
+    returnExpression: "(" + pluck(specialGlobals[commandWithoutSemi], "prop").map(item => commandWithoutSemi + "." + item).join(", ") + ");"
+  }: {
+    content: contentWithReturnExpression,
+    "returnType": "bool",
+    returnExpression: isExpression(lastCommand) ? lastCommand : 'false;'
+  })
   let source = sourceFirstPass
 
   // Attempt to compile the first pass knowing that any return value (other than bool) will fail. Parse the error message to determine the correct return value and generate the correct source.
@@ -73,11 +109,10 @@ const evalSol = (commands, options={}) => {
     if (errorsFirstPass.length > 0) {
       const match = matchReturnTypeFromError(errorsFirstPass[0])
       if (match) {
-        returnType = match[1]
+        source = template({ content, "returnType": match[1], returnExpression: lastCommand })
       } else {
         return Promise.reject(errorsFirstPass.join('\n'))
       }
-      source = template({ content, returnType, returnExpression: lastCommand })
     }
   }
 
@@ -123,17 +158,28 @@ module.exports = options => {
 
   /** Takes a new command and returns the result of evaluating it in the current context. */
   return rawCommand => {
-    const command = rawCommand.trim()
+    const commandTrimmed = rawCommand.trim()
+    const command = commandTrimmed.endsWith(';') ? 
+      commandTrimmed.substring(0, commandTrimmed.length - 1) : 
+      commandTrimmed
 
     // ignore blank lines
     if (command === '') {
       return Promise.resolve(null)
     }
 
-    const commandWithSemi = command + (command.endsWith(';') ? '' : ';')
-    return evalSol(commands.concat(commandWithSemi), options)
+    return evalSol(commands.concat(command + ";"), options)
       .then(result => {
-        commands.push(commandWithSemi)
+        commands.push(command + ";")
+        if (command in specialGlobals) {
+          let struct = {}
+
+          let props = specialGlobals[command]
+          for (let i = 0; i < props.length; i++) {
+            struct[props[i].prop] = result[i]
+          }
+          return JSON.stringify(struct, null, 2)
+        }
         return result
       })
   }

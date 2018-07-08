@@ -97,4 +97,40 @@ describe('solidity-repl', () => {
         assert.equal(result, 10)
       })
   })
+
+  it('should execute special command msg', () => {
+    return repl('msg')
+      .then(result => {
+        const parsedResult = JSON.parse(result)
+        assert.equal(Object.keys(parsedResult).length, 5)
+        assert.ok("data" in parsedResult)
+        assert.ok("gas" in parsedResult)
+        assert.ok("sender" in parsedResult)
+        assert.ok("sig" in parsedResult)
+        assert.ok("value" in parsedResult)
+      })
+  })
+
+  it('should execute special command block', () => {
+    return repl('block')
+      .then(result => {
+        const parsedResult = JSON.parse(result)
+        assert.equal(Object.keys(parsedResult).length, 5)
+        assert.ok("coinbase" in parsedResult)
+        assert.ok("difficulty" in parsedResult)
+        assert.ok("gaslimit" in parsedResult)
+        assert.ok("number" in parsedResult)
+        assert.ok("timestamp" in parsedResult)
+      })
+  })
+
+   it('should execute special command tx', () => {
+    return repl('tx')
+      .then(result => {
+        const parsedResult = JSON.parse(result)
+        assert.equal(Object.keys(parsedResult).length, 2)
+        assert.ok("gasprice" in parsedResult)
+        assert.ok("origin" in parsedResult)
+      })
+  })
 })
