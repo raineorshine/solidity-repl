@@ -6,7 +6,6 @@ const chalk = require('chalk')
 const waterfall = require('promise.waterfall')
 const Web3 = require('web3')
 const provider = new Web3.providers.HttpProvider('http://localhost:8545')
-// const TestRPC = require('ethereumjs-testrpc')
 // TestRPC.provider() gives error "Synchronous requests are not supported."
 // during newContract in latest version.
 const web3 = new Web3(provider)
@@ -159,8 +158,8 @@ module.exports = options => {
   /** Takes a new command and returns the result of evaluating it in the current context. */
   return rawCommand => {
     const commandTrimmed = rawCommand.trim()
-    const command = commandTrimmed.endsWith(';') ? 
-      commandTrimmed.substring(0, commandTrimmed.length - 1) : 
+    const command = commandTrimmed.endsWith(';') ?
+      commandTrimmed.substring(0, commandTrimmed.length - 1) :
       commandTrimmed
 
     // ignore blank lines

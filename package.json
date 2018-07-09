@@ -6,11 +6,11 @@
   "repository": "https://github.com/raineorshine/solidity-repl",
   "author": {
     "name": "Raine Revere",
-    "email": "raineorshine@gmail.com",
-    "url": "http://raine.tech"
+    "email": "raine@clarityofheart.com",
+    "url": "http://clarityofheart.com"
   },
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=6.0.0"
   },
   "bin": {
     "solr": "./bin.js"
@@ -22,19 +22,18 @@
   },
   "devDependencies": {
     "ganache-cli": "^6.1.5",
-    "mocha": "^2.5.3",
-    "nodemon": "^1.14.7",
-    "standard": "^7.0.1"
+    "mocha": "^5.2.0",
+    "nodemon": "^1.17.5",
+    "standard": "^11.0.1"
   },
   "dependencies": {
-    "bignumber.js": "^4.1.0",
+    "bignumber.js": "^7.2.1",
     "bluebird": "^3.5.1",
-    "chalk": "^2.1.0",
-    "commander": "^2.12.2",
+    "chalk": "^2.4.1",
+    "commander": "^2.16.0",
     "eth-new-contract": "^0.3.0",
-    "ethereumjs-testrpc": "^4.1.3",
-    "promise.waterfall": "^3.1.4",
-    "solc": "^0.4.19",
-    "web3": "^0.17.0-alpha"
+    "promise.waterfall": "^3.2.0",
+    "solc": "^0.4.24",
+    "web3": "^0.20.6"
   }
 }

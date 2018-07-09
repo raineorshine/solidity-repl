@@ -7,8 +7,8 @@
 ## Installation
 
 ```sh
-# TestRPC must be installed and run globally now since TestRPC.provider() does not work
-$ npm install -g ethereumjs-testrpc
+# requires local RPC client
+$ npm install -g ganache-cli
 
 $ npm install -g solidity-repl
 ```
@@ -16,7 +16,8 @@ $ npm install -g solidity-repl
 ## Usage
 
 ```sh
-$ testrpc
+# Run RPC client on port 8545
+$ ganache-cli
 
 $ solr
 Welcome to the Solidity REPL!
