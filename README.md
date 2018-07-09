@@ -1,4 +1,6 @@
 # solidity repl
+[![npm version](https://img.shields.io/npm/v/solidity-repl.svg)](https://npmjs.org/package/solidity-repl)
+[![Build Status](https://travis-ci.org/raineorshine/solidity-repl.svg?branch=master)](https://travis-ci.org/raineorshine/solidity-repl)
 
 ![REPL Screenshot](https://raw.githubusercontent.com/raineorshine/solidity-repl/master/screenshot.png)
 

@@ -17,10 +17,11 @@
   },
   "scripts": {
     "lint": "standard",
-    "test": "mocha",
+    "test": "./test/test.sh",
     "watch": "nodemon -x \"npm run lint && npm run test\""
   },
   "devDependencies": {
+    "ganache-cli": "^6.1.5",
     "mocha": "^2.5.3",
     "nodemon": "^1.14.7",
     "standard": "^7.0.1"
