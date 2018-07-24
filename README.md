@@ -10,7 +10,14 @@
 # requires local RPC client
 $ npm install -g ganache-cli
 
+# install
 $ npm install -g solidity-repl
+```
+
+Dependending on your permissions, you may need a bigger hammer:
+
+```
+sudo npm install -g solidity-repl --unsafe-perm=true --allow-root
 ```
 
 ## Usage
