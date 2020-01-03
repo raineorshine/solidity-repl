@@ -152,7 +152,7 @@ ${source.split('\n').map((line, n) => (n + 1) + '  ' + line).join('\n')}
 }
 
 /** Creates a new repl environment that can evaluate solidity commands. Returns a single function that takes a new command. */
-module.exports = options => {
+module.exports.Repl = options => {
   const commands = []
 
   /** Takes a new command and returns the result of evaluating it in the current context. */
@@ -183,3 +183,5 @@ module.exports = options => {
       })
   }
 }
+
+module.exports.specialGlobals = specialGlobals
