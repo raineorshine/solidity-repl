@@ -9,6 +9,12 @@ const provider = new Web3.providers.HttpProvider('http://localhost:8545')
 // TestRPC.provider() gives error "Synchronous requests are not supported."
 // during newContract in latest version.
 const web3 = new Web3(provider)
+
+if(!web3.isConnected()) {
+  console.log("No local RPC client found to connect to.\nRun ganache-cli on port 8545 with ganache-cli.")
+  process.exit()
+} 
+
 const newContract = require('eth-new-contract').default(provider)
 const pkg = require('./package.json')
 
