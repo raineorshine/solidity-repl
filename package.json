@@ -10,7 +10,7 @@
     "url": "http://clarityofheart.com"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=6.11.5"
   },
   "bin": {
     "solr": "./bin.js"
