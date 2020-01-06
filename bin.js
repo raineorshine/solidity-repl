@@ -9,14 +9,16 @@ const chalk = require("chalk")
 yargs
   .version(pkg.version)
   .wrap(yargs.terminalWidth())
-  .usage(`\n${chalk.bold("Help for using the Solidity REPL.")}\n${chalk.bold("Try Solidity instantly with a command-line Solidity console.")}\n\n${chalk.bold.underline("Available commands:")}
-  \nmsg
-  \n${specialGlobals.msg.map(m=>`${m.prop} ${m.returnType}\n`)}
+  .usage(`\n${chalk.bold.underline("These are the available commands: [<command>: <returnType>]")}
+  \n${specialGlobals.msg.map(m=>`msg.${m.prop}: ${m.returnType}`).join("\n")}
+  \n${specialGlobals.block.map(m=>`block.${m.prop}: ${m.returnType}`).join("\n")}
+  \n${specialGlobals.tx.map(m=>`tx.${m.prop}: ${m.returnType}`).join("\n")}
   `)
-  .epilogue('for more information, find our repository at https://github.com/raineorshine/solidity-repl')
+  .epilogue('for more information, look at the code repository at https://github.com/raineorshine/solidity-repl')
   .argv
 
 console.log('Welcome to the Solidity REPL!')
+console.log('For help use solr --help')
 
 const printPrompt = () => process.stdout.write('> ')
 
