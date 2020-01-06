@@ -1,21 +1,21 @@
 #!/usr/bin/env node
 'use strict'
 
-const yargs = require("yargs")
-const pkg = require("./package.json")
+const yargs = require('yargs')
+const pkg = require('./package.json')
 const {Repl, specialGlobals} = require('./index.js')
-const chalk = require("chalk")
+const chalk = require('chalk')
 
 yargs
   .version(pkg.version)
   .wrap(yargs.terminalWidth())
-  .usage(`\n${chalk.bold.underline("These are the available commands: [<command>: <returnType>]")}
-  \n${specialGlobals.msg.map(m=>`msg.${m.prop}: ${m.returnType}`).join("\n")}
-  \n${specialGlobals.block.map(m=>`block.${m.prop}: ${m.returnType}`).join("\n")}
-  \n${specialGlobals.tx.map(m=>`tx.${m.prop}: ${m.returnType}`).join("\n")}
+  .usage(`\n${chalk.bold.underline('These are the available commands: [<command>: <returnType>]')}
+  \n${specialGlobals.msg.map(m => `msg.${m.prop}: ${m.returnType}`).join('\n')}
+  \n${specialGlobals.block.map(m => `block.${m.prop}: ${m.returnType}`).join('\n')}
+  \n${specialGlobals.tx.map(m => `tx.${m.prop}: ${m.returnType}`).join('\n')}
   `)
   .epilogue('for more information, look at the code repository at https://github.com/raineorshine/solidity-repl')
-  .argv
+  .parse()
 
 console.log('Welcome to the Solidity REPL!')
 console.log('For help use solr --help')

@@ -2,7 +2,7 @@
 
 /* global describe, it, beforeEach */
 
-const {Repl, specialGlobals} = require('../index.js')
+const { Repl } = require('../index.js')
 const assert = require('assert')
 
 describe('solidity-repl', () => {
@@ -103,11 +103,11 @@ describe('solidity-repl', () => {
       .then(result => {
         const parsedResult = JSON.parse(result)
         assert.equal(Object.keys(parsedResult).length, 5)
-        assert.ok("data" in parsedResult)
-        assert.ok("gas" in parsedResult)
-        assert.ok("sender" in parsedResult)
-        assert.ok("sig" in parsedResult)
-        assert.ok("value" in parsedResult)
+        assert.ok('data' in parsedResult)
+        assert.ok('gas' in parsedResult)
+        assert.ok('sender' in parsedResult)
+        assert.ok('sig' in parsedResult)
+        assert.ok('value' in parsedResult)
       })
   })
 
@@ -116,21 +116,21 @@ describe('solidity-repl', () => {
       .then(result => {
         const parsedResult = JSON.parse(result)
         assert.equal(Object.keys(parsedResult).length, 5)
-        assert.ok("coinbase" in parsedResult)
-        assert.ok("difficulty" in parsedResult)
-        assert.ok("gaslimit" in parsedResult)
-        assert.ok("number" in parsedResult)
-        assert.ok("timestamp" in parsedResult)
+        assert.ok('coinbase' in parsedResult)
+        assert.ok('difficulty' in parsedResult)
+        assert.ok('gaslimit' in parsedResult)
+        assert.ok('number' in parsedResult)
+        assert.ok('timestamp' in parsedResult)
       })
   })
 
-   it('should execute special command tx', () => {
+  it('should execute special command tx', () => {
     return repl('tx')
       .then(result => {
         const parsedResult = JSON.parse(result)
         assert.equal(Object.keys(parsedResult).length, 2)
-        assert.ok("gasprice" in parsedResult)
-        assert.ok("origin" in parsedResult)
+        assert.ok('gasprice' in parsedResult)
+        assert.ok('origin' in parsedResult)
       })
   })
 })
