@@ -2,7 +2,7 @@
 
 /* global describe, it, beforeEach */
 
-const Repl = require('../index.js')
+const {Repl, specialGlobals} = require('../index.js')
 const assert = require('assert')
 
 describe('solidity-repl', () => {

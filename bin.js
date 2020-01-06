@@ -1,31 +1,41 @@
 #!/usr/bin/env node
 'use strict'
 
-const program = require('commander')
-const pkg = require('./package.json')
-const Repl = require('./index.js')
+const yargs = require("yargs")
+const pkg = require("./package.json")
+const {Repl, specialGlobals} = require('./index.js')
+const chalk = require("chalk")
+
+yargs
+  .version(pkg.version)
+  .wrap(yargs.terminalWidth())
+  .usage(`\n${chalk.bold.underline("These are the available commands: [<command>: <returnType>]")}
+  \n${specialGlobals.msg.map(m=>`msg.${m.prop}: ${m.returnType}`).join("\n")}
+  \n${specialGlobals.block.map(m=>`block.${m.prop}: ${m.returnType}`).join("\n")}
+  \n${specialGlobals.tx.map(m=>`tx.${m.prop}: ${m.returnType}`).join("\n")}
+  `)
+  .epilogue('for more information, look at the code repository at https://github.com/raineorshine/solidity-repl')
+  .argv
 
 console.log('Welcome to the Solidity REPL!')
-
-program
-  .version(pkg.version)
-  .option('--loglevel [value]', 'errors-only (default)/warnings')
-  .parse(process.argv)
+console.log('For help use solr --help')
 
 const printPrompt = () => process.stdout.write('> ')
 
 printPrompt()
 
-let repl = Repl(program)
+let repl = Repl(yargs)
 
 process.stdin.resume()
 process.stdin.setEncoding('utf8')
 
-process.stdin.on('data', command => {
-  if (command === 'quit\n') {
+process.stdin.on('data', rawCommand => {
+  const command = rawCommand.trim()
+  if (command === 'quit') {
     process.exit()
-  } else if (command === 'clear\n') {
-    repl = Repl(program)
+  } else if (command === 'clear') {
+    repl = Repl(yargs)
+    process.stdout.write('\x1B[2J\x1B[0f')
     printPrompt()
   } else {
     // evaluate the command

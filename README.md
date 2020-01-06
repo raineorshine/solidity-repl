@@ -41,11 +41,10 @@ Welcome to the Solidity REPL!
 Here are some features that are great candidates for pull requests! Start an issue to let me know you are working on it.
 
 1. Make it work in the browser!
-1. Fix `1 ether`
-1. Fix `this`
-1. Add support for function declarations.
-1. Add up and down arrow
-1. Add `yargs` for cli help.
+2. Fix `1 ether`
+3. Fix `this`
+4. Add support for function declarations.
+5. Add up and down arrow
 
 # Developer Notes
 

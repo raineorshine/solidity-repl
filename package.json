@@ -18,6 +18,7 @@
   "scripts": {
     "lint": "standard",
     "test": "./test/test.sh",
+    "mocha": "mocha",
     "watch": "nodemon -x \"npm run lint && npm run test\""
   },
   "devDependencies": {
@@ -30,10 +31,10 @@
     "bignumber.js": "^7.2.1",
     "bluebird": "^3.5.1",
     "chalk": "^2.4.1",
-    "commander": "^2.16.0",
     "eth-new-contract": "^0.3.0",
     "promise.waterfall": "^3.2.0",
     "solc": "^0.4.24",
-    "web3": "^0.20.6"
+    "web3": "^0.20.6",
+    "yargs": "^15.1.0"
   }
 }
